@@ -2,7 +2,7 @@
   "name": "react-parcel-test-upload",
   "version": "1.0.0",
   "description": "\"example repo\"",
-  "main": "index.html",
+  "main": "dist/index.html",
   "scripts": {
     "start": "parcel index.html",
 	"build": "parcel build index.html --public-url https://ramirostuw.github.io/react-parcel-test-upload/; rm -rf docs; mv dist docs;",
