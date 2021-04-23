@@ -1,33 +1,29 @@
 import React from "react";
-
+//import WorldviewDemo from "./worldview-example";
+import {csv} from "d3-fetch";
 /*
-const App = () => {
-  return <div>hello world from react</div>;
-};*/
+    return (
+        <div>
+            <p>from App rerender</p>
+            <p>now for a worldview demo! </p>
+            <p>class on April 13</p>
+            <p>blue</p>
 
-const viewHeight = 500;
-const viewWidth = 500;
+            <div stype={{ width: "50vw", height: "50vh" }}>
+                <WorldviewDemo />
+            </div>
+        </div>
+    )*/
 const App = () => {
-  return (
-    <svg
-      style={{
-        border: "1px solid lightgrey",
-        width: viewWidth,
-        height: viewHeight,
-      }}
-    >
-      <circle cx={20} cy={20} r="5" />
-      <rect x={200} y={200} width={10} height={10} fill="rgb(230,230,230)" />
-      <rect x={212} y={200} width={10} height={10} fill="rgb(230,230,230)" />
-      <rect x={224} y={200} width={10} height={10} fill="rgb(230,230,230)" />
-      <rect x={236} y={200} width={10} height={10} fill="rgb(230,230,230)" />
-      <rect x={248} y={200} width={10} height={10} />
-      <line x1={20} y1={viewHeight - 20} x2={150} y2={100} stroke="black" />
-      <text x="20" y="35" style={{ font: "italic 16px" }}>
-        Price history of 100 randomly selected Pokemon cards
-      </text>
-    </svg>
-  );
-};
+    csv("https://raw.githubusercontent.com/colinmegill/react-parcel-starter/main/weather.csv").then((data) => console.log(data));
+    //.then((response) => response.json())
+    
+    return (
+        
+        <div>
+            <h1>Exploratory Data Analysis, Assignment 2, info 474 spring 2021</h1>
+        </div>
+    )
+}
 
 export default App;
