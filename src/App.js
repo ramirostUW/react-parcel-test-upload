@@ -3,7 +3,11 @@ import { useFetch } from "./hooks/useFetch";
 //import WorldviewDemo from "./worldview-example";
 //import {csv} from "d3-fetch";
 import { scaleLinear } from "d3-scale";
-import { extent, max, min } from "d3-array";
+import { extent, max, min, bin } from "d3-array";
+import * as topojson from "topojson-client";
+import world from '../land-50m';
+//import {geoNaturalEarth1} from "d3-geo"
+//import {geoNaturalEarth1} from "d3-geo-projection";
 /*
     return (
         <div>
@@ -18,14 +22,25 @@ import { extent, max, min } from "d3-array";
         </div>
     )*/
 const App = () => {
+
+    //console.log("d3: ", d3.geoNaturalEarth1);
     /* THIS GOES IN APP.JS */  
     const [data, loading] = useFetch(
         "https://raw.githubusercontent.com/colinmegill/react-parcel-starter/main/weather.csv"
     );
-    const dataSmallSample = data.slice(0, 1000);
+    const dataSmallSample = data.slice(0, 5000);
+
     const TMAXextent = extent(dataSmallSample, (d) => {
         return d.TMAX;
     });
+
+    const land = topojson.feature(world, world.objects.land);
+    const projection = d3.geoNaturalEarth1();
+    const path = d3.geoPath(projection);
+    const mapString = path(land);
+
+    console.log("map", mapString);
+
     const maxValueOfMax = max( 
         dataSmallSample.map((measurement) => {
         return +measurement.TMAX;
@@ -45,10 +60,18 @@ const App = () => {
     const chartSize = 500;
     const margin = 20;
     const axisTextAlignmentFactor = 3;
-    
+    const histogramLeftPadding = 20;
     const yScale = scaleLinear()
         .domain(TMAXextent)
         .range ([chartSize - margin, chartSize - 350]);
+
+    _bins = bin().thresholds(30);
+    tmaxBins = _bins(
+        data.map((d) => {
+            return +d.TMAX;
+        })
+    );
+
     
     return (
         
@@ -56,6 +79,34 @@ const App = () => {
             <h1>Exploratory Data Analysis, Assignment 2, info 474 sp 2021</h1>
             <p>{loading && "Loading data!"}</p>
 
+            <h3> Working with Geo Data </h3>
+            <svg width={1000} 
+                height={600} 
+                style={{ border: "1px solid black" }}>
+                <path d={mapString} fill="rgb(200, 200, 200)"/>
+                {dataSmallSample.map((measurement) => {
+                    return <circle 
+                        transform={
+                            `translate(
+                                ${projection(
+                                    [measurement.longitude, measurement.latitude]
+                                    ) })`} r="1.5"/>
+                })}
+            </svg>
+            <h3>Binning</h3>
+            <svg width={chartSize} height={chartSize} style={{ border: "1px solid black" }}>
+                {tmaxBins.map((bin, index) => {
+                    const binheight = bin.length;
+                    return (
+                        <rect 
+                        y={chartSize - 50 - binheight} 
+                        width="10" 
+                        height={binheight} 
+                        x={histogramLeftPadding + index * 11 }/>
+                        //<rect key={index} x={index * 11} y={chartSize} width="10" height={bin.length}/>
+                    );
+                })}
+            </svg>
             
             <h3>D3 Scales</h3>
             <svg
